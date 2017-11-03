@@ -1,5 +1,7 @@
 extends Node
 
+const DungeonRoom = preload("DungeonRoom.gd")
+
 func _ready():
 	randomize()
 #Generates a random rounded point in a cricle of R raduius.
@@ -8,21 +10,12 @@ func getRandomPointInCircle(radius):
 	var randomizer = randf() + randf()
 	var rounder = randomizer if randomizer < 1 else 2 - randomizer
 	return Vector2(round(radius * rounder * cos(angle) + radius), round(radius * rounder * sin(angle) + radius))
-#Checks if a Rect2 collides with another.
-func roomCollides(room, other):
-	return !(room.end.x < other.pos.x || room.pos.x > other.end.x || room.end.y < other.pos.y || room.pos.y > other.end.y)
 #Checks if a Rect2 collides with at least one other Rect2 in an array.
 func roomCollidesInArray(room, others):
 	for other in others:
-		if(roomCollides(room, others[other])):
+		if(other.collidesWith(room)):
 			return true
 	return false
-#Gets midpoints of all Rect2 in dictionary.
-func getMidPoints(rooms):
-	var midpoints = []
-	for room in rooms:
-		midpoints.append(Vector2(rooms[room].pos.x + rooms[room].size.x / 2, rooms[room].pos.y + rooms[room].size.y / 2))
-	return midpoints
 #Checks if two line segments intersect.
 func linesIntersect(line1, line2):
 	#Calculate the slope and y-intercetpt of the two lines.
@@ -46,21 +39,15 @@ func pointInRange(point, line):
 #Triangulates rooms.
 func triangulateRooms(rooms):
 	var edges = []
-	var midpoints = getMidPoints(rooms)
-	var newRooms = dictionaryToArray(rooms)
 	#Insertion sorts by x value smallest to largest.
 	var i = 1
-	while(i < midpoints.size()):
+	while(i < rooms.size()):
 		var j = i
-		while(j > 0 && midpoints[j - 1].x > midpoints[j].x):
+		while(j > 0 && rooms[j - 1].getMidpoint().x > rooms[j].getMidpoint().x):
 			#Swapping the midpoints.
-			var temp = midpoints[j - 1]
-			midpoints[j - 1] = midpoints[j]
-			midpoints[j] = temp
-			#Swapping the rooms.
-			temp = newRooms[j - 1]
-			newRooms[j - 1] = newRooms[j]
-			newRooms[j] = temp
+			var temp = rooms[j - 1]
+			rooms[j - 1] = rooms[j]
+			rooms[j] = temp
 			j -= 1
 		i += 1
 	#Initial triangle.
@@ -74,26 +61,17 @@ func triangulateRooms(rooms):
 		for previousRoom in range(currentRoom):
 			intersects = false
 			#Connects currentRoom to the previousRoom.
-			var currentEdge = [Vector2(midpoints[currentRoom]), Vector2(midpoints[previousRoom])]
+			var currentEdge = [Vector2(rooms[currentRoom].getMidpoint()), Vector2(rooms[previousRoom].getMidpoint())]
 			#For all existing edges in the array.
 			for edge in range(edges.size()):
-				var previousEdge = [Vector2(midpoints[edges[edge].x]), Vector2(midpoints[edges[edge].y])]
+				var previousEdge = [Vector2(rooms[edges[edge].x].getMidpoint()), Vector2(rooms[edges[edge].y].getMidpoint())]
 				#Checks is the currentEdge intersects with one of the previous eges.
 				if(linesIntersect(currentEdge, previousEdge)):
 					intersects = true
 			#If no intersections were found, add to edges array.
 			if(!intersects): 
 				edges.append(Vector2(currentRoom, previousRoom))
-	#Translate sorted edges to room ids.
-	for i in range(edges.size()):
-		edges[i] = Vector2(newRooms[edges[i].x][0], newRooms[edges[i].y][0])
 	return edges
 
 func initMST():
 	pass
-
-func dictionaryToArray(dict):
-	var newArray = []
-	for key in dict:
-		newArray.append([str(key), dict[key]])
-	return newArray
