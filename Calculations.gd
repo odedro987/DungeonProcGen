@@ -54,6 +54,7 @@ func triangulateRooms(rooms):
 	edges.append(Vector2(0, 1))
 	edges.append(Vector2(0, 2))
 	edges.append(Vector2(1, 2))
+	var times = 0
 	var intersects = false
 	#For all rooms left after the initial triangle.
 	for currentRoom in range(3, rooms.size()):
@@ -63,14 +64,17 @@ func triangulateRooms(rooms):
 			#Connects currentRoom to the previousRoom.
 			var currentEdge = [Vector2(rooms[currentRoom].getMidpoint()), Vector2(rooms[previousRoom].getMidpoint())]
 			#For all existing edges in the array.
-			for edge in range(edges.size()):
+			for edge in range(edges.size() - 1, -1, -1):
+				times += 1
 				var previousEdge = [Vector2(rooms[edges[edge].x].getMidpoint()), Vector2(rooms[edges[edge].y].getMidpoint())]
 				#Checks is the currentEdge intersects with one of the previous eges.
 				if(linesIntersect(currentEdge, previousEdge)):
 					intersects = true
+					break
 			#If no intersections were found, add to edges array.
 			if(!intersects): 
 				edges.append(Vector2(currentRoom, previousRoom))
+	print(times)
 	return edges
 
 func initMST():
