@@ -1,7 +1,8 @@
 extends Node2D
 
-var roomCount
-var roomSizeRange
+const ROOM_COUNT = 10
+const ROOM_SIZE_RANGE = Vector2(30, 100)
+const DUNGEON_RADIUS = 200
 var rooms
 var edges
 
@@ -9,18 +10,16 @@ const DungeonRoom = preload("DungeonRoom.gd")
 
 func _ready():
 	randomize()
-	roomCount = 10
-	roomSizeRange = Vector2(30, 100)
 	rooms = []
 	generateRooms()
 	edges = Calculations.triangulateRooms(rooms)
 	_draw()
 
 func generateRooms():
-	for i in range(roomCount):
-		var newRoom = Rect2(Calculations.getRandomPointInCircle(200), Vector2(round(rand_range(roomSizeRange.x, roomSizeRange.y)), round(rand_range(roomSizeRange.x, roomSizeRange.y))))
+	for i in range(ROOM_COUNT):
+		var newRoom = Rect2(Calculations.getRandomPointInCircle(DUNGEON_RADIUS), Vector2(round(rand_range(ROOM_SIZE_RANGE.x, ROOM_SIZE_RANGE.y)), round(rand_range(ROOM_SIZE_RANGE.x, ROOM_SIZE_RANGE.y))))
 		while(Calculations.roomCollidesInArray(newRoom, rooms)):
-			newRoom = Rect2(Calculations.getRandomPointInCircle(200), Vector2(round(rand_range(roomSizeRange.x, roomSizeRange.y)), round(rand_range(roomSizeRange.x, roomSizeRange.y))))
+			newRoom = Rect2(Calculations.getRandomPointInCircle(DUNGEON_RADIUS), Vector2(round(rand_range(ROOM_SIZE_RANGE.x, ROOM_SIZE_RANGE.y)), round(rand_range(ROOM_SIZE_RANGE.x, ROOM_SIZE_RANGE.y))))
 		var dungeonRoom = DungeonRoom.new()
 		dungeonRoom.init(i, newRoom)
 		rooms.append(dungeonRoom)
