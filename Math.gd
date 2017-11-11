@@ -3,11 +3,19 @@ extends Node
 func _ready():
 	randomize()
 #Generates a random rounded point in a cricle of R raduius.
-func getRandomPointInCircle(radius):
+func getRandomPointInCircle(radius, gridSnap):
 	var angle = 2 * PI * randf()
 	var randomizer = randf() + randf()
 	var rounder = randomizer if randomizer < 1 else 2 - randomizer
-	return Vector2(round(radius * rounder * cos(angle) + radius), round(radius * rounder * sin(angle) + radius))
+	var randomPoint = Vector2(round(radius * rounder * cos(angle) + radius), round(radius * rounder * sin(angle) + radius))
+	return Vector2(randomPoint.x - (int(randomPoint.x) % gridSnap), randomPoint.y - (int(randomPoint.y) % gridSnap))
+#Return the midpoint of a circle created from 3 points.
+func getCircleCenterFromThreePoints(a, b, c):
+	var m1 = (b.y - a.y) / (b.x - a.x)
+	var m2 = (c.y - b.y) / (c.x - b.x)
+	var centerX = (m1 * m2 * (a.y - c.y) + (m2 * (a.x + b.x)) - m1 * (b.x + c.x)) / (2 * (m2 - m1))
+	var centerY = (-1 / m1) * (centerX - ((a.x + b.x) / 2)) + ((a.y + b.y) / 2)
+	return Vector2(centerX, centerY)
 #Checks if two line segments intersect.
 func linesIntersect(line1, line2):
 	#Calculate the slope and y-intercetpt of the two lines.

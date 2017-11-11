@@ -26,10 +26,10 @@ func heapSort(array, type):
 		sorted[end] = sorted[0]
 		sorted[0] = temp
 		end -= 1
-		siftDown(sorted, 0, end, type)
+		shiftDown(sorted, 0, end, type)
 	return sorted
 #Repairs the heap.
-func siftDown(array, start, end, type):
+func shiftDown(array, start, end, type):
 	#Sets root as start.
 	var root = start
 	#While there's a left child.
@@ -56,51 +56,5 @@ func siftDown(array, start, end, type):
 func heapify(array, type):
 	var start = getHeapNode(array.size() - 1, HeapNode.PARENT)
 	while(start >= 0):
-		siftDown(array, start, array.size() - 2, type)
-		start -= 1
-#Heap sorts an array by type.
-func heapSortEdges(array, type):
-	heapify(array, type)
-	var end = array[0].size() - 1
-	while(end > 0):
-		var temp = array[0][end]
-		array[0][end] = array[0][0]
-		array[0][0] = temp
-		temp = array[1][end]
-		array[1][end] = array[1][0]
-		array[1][0] = temp
-		end -= 1
-		siftDownEdges(array, 0, end, type)
-#Repairs the heap.
-func siftDownEdges(array, start, end, type):
-	#Sets root as start.
-	var root = start
-	#While there's a left child.
-	while(getHeapNode(root, HeapNode.LEFT_CHILD) <= end):
-		var child = getHeapNode(root, HeapNode.LEFT_CHILD)
-		var swap = root
-		var leftSwap = array[1][swap] < array[1][child] if type == SiftType.SMALLEST else array[1][swap] > array[1][child]
-		#If the left child is bigger/smaller than the root.
-		if(leftSwap):
-			swap = child
-		var rightSwap = array[1][swap] < array[1][child + 1] if type == SiftType.SMALLEST else array[1][swap] > array[1][child + 1]
-		#If the right child is bigger/smaller than the left child.
-		if(child + 1 <= end && rightSwap):
-			swap = child + 1
-		#If swap isn't root, meaning they should swap.
-		if(swap != root):
-			var temp = array[0][root]
-			array[0][root] = array[0][swap]
-			array[0][swap] = temp
-			temp = array[1][root]
-			array[1][root] = array[1][swap]
-			array[1][swap] = temp
-			root = swap
-		else:
-			break
-#Puts the elements of array in heap order.
-func heapifyEdges(array, type):
-	var start = getHeapNode(array[0].size() - 1, HeapNode.PARENT)
-	while(start >= 0):
-		siftDownEdges(array, start, array[0].size() - 2, type)
+		shiftDown(array, start, array.size() - 2, type)
 		start -= 1
