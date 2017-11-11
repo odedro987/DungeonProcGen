@@ -2,6 +2,9 @@ extends Node
 
 func _ready():
 	randomize()
+#Distance between two points.
+func getDistance(a, b):
+	return sqrt(pow(abs(a.x - b.x), 2) + pow(abs(a.y - b.y), 2))
 #Generates a random rounded point in a cricle of R raduius.
 func getRandomPointInCircle(radius, gridSnap):
 	var angle = 2 * PI * randf()

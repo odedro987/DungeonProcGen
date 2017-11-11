@@ -1,6 +1,6 @@
 extends Node2D
 
-const ROOM_COUNT = 10
+const ROOM_COUNT = 20
 const TILE_SIZE = 8
 const ROOM_SIZE_RANGE = Vector2(8 * 6, 8 * 12)
 const DUNGEON_RADIUS = 300
@@ -15,7 +15,7 @@ func _ready():
 	randomize()
 	rooms = []
 	generateRooms()
-	edges = [Calculations.triangulateRooms(rooms), []]
+	edges = [Calculations.triangulateRooms(rooms, DUNGEON_RADIUS), []]
 	for edge in range(edges[0].size()):
 		var diff = rooms[edges[0][edge].x].getMidpoint() - rooms[edges[0][edge].y].getMidpoint()
 		edges[1].append(sqrt(pow(diff.y, 2) + pow(diff.x, 2)))

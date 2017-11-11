@@ -11,7 +11,7 @@ func roomCollidesInArray(room, others):
 			return true
 	return false
 #Triangulates rooms.
-func triangulateRooms(rooms):
+func triangulateRooms(rooms, radius):
 	var edges = []
 	#Insertion sorts by x value smallest to largest.
 	var i = 1
@@ -36,6 +36,9 @@ func triangulateRooms(rooms):
 			intersects = false
 			#Connects currentRoom to the previousRoom.
 			var currentEdge = [Vector2(rooms[currentRoom].getMidpoint()), Vector2(rooms[previousRoom].getMidpoint())]
+			var distance = Math.getDistance(currentEdge[0], currentEdge[1])
+			var diff = Math.getDistance(currentEdge[1], Vector2(currentEdge[1].x, currentEdge[0].y))
+			var angle = sin(diff / distance) * 180 / PI
 			#For all existing edges in the array.
 			for edge in range(edges.size() - 1, -1, -1):
 				var previousEdge = [Vector2(rooms[edges[edge].x].getMidpoint()), Vector2(rooms[edges[edge].y].getMidpoint())]
@@ -44,7 +47,7 @@ func triangulateRooms(rooms):
 					intersects = true
 					break
 			#If no intersections were found, add to edges array.
-			if(!intersects): 
+			if(!intersects && angle < 60 && distance < radius * 0.75): 
 				edges.append(Vector2(currentRoom, previousRoom))
 	return edges
 #Finds the minimum spanning tree(MST) of edges.
