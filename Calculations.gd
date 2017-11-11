@@ -71,8 +71,7 @@ func initMST(edges):
 		i += 1
 	#Sorted edges array.
 	var sortedEdges = copy[0]
-	#Adds the first(smallest) edge to the MST and creates the first set.
-	mstEdges.append(sortedEdges[0])
+	#Creates the first set.
 	sets.append([sortedEdges[0]])
 	#Connection variables.
 	var loops = false
